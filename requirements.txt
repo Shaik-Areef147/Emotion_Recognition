@@ -1,0 +1,9 @@
+tensorflow
+flask
+numpy
+pandas
+librosa
+scikit-learn
+soundfile
+matplotlib
+seaborn
