@@ -70,12 +70,25 @@ def home():
             # Scale features
             features = scaler.transform([features])
 
-            # Predict
-            pred = model.predict(features, verbose=0)
+            features = np.array(features)
+
+            features = features.reshape(
+                features.shape[0],
+                features.shape[1],
+                1
+            )
+
+            pred = model.predict(
+                features,
+                verbose=0
+            )
 
             emotion = encoder.inverse_transform(
                 [np.argmax(pred)]
             )[0]
+
+            model = load_model("emotion_model.h5")
+            print("Model Input Shape:", model.input_shape)
 
             emoji_map = {
                 "happy": "😊 Happy",
