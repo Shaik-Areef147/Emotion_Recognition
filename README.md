@@ -80,7 +80,7 @@ python app.py
 ## 🌐 Open Application
 
 
-http://127.0.0.1:5000
+https://emotion-recognition-1yov.onrender.com
 
 
 ---
