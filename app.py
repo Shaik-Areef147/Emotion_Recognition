@@ -9,9 +9,6 @@ from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 
-# Load model
-model = load_model("emotion_model.h5")
-
 # Load encoder
 with open("label_encoder.pkl", "rb") as f:
     encoder = pickle.load(f)
