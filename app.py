@@ -99,8 +99,8 @@ def home():
         )
 
     except Exception as e:
-    import traceback
-    return f"<pre>{traceback.format_exc()}</pre>"
+        import traceback
+        return f"<pre>{traceback.format_exc()}</pre>"
 
 
 if __name__ == "__main__":
