@@ -1,73 +1,112 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Bank Loan Approval Prediction</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<title>Emotion Recognition AI</title>
+
+<style>
+
+body{
+background:linear-gradient(
+135deg,
+#667eea,
+#764ba2,
+#ff6ec4
+);
+
+font-family:Arial;
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+}
+
+.container{
+
+background:white;
+
+padding:30px;
+
+border-radius:20px;
+
+width:500px;
+
+text-align:center;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+h1{
+
+color:#6a11cb;
+}
+
+button{
+
+background:#6a11cb;
+
+color:white;
+
+padding:12px 25px;
+
+border:none;
+
+border-radius:10px;
+
+cursor:pointer;
+}
+
+.result{
+
+font-size:30px;
+
+margin-top:20px;
+
+font-weight:bold;
+}
+
+</style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🏦 Bank Loan Approval Prediction</h1>
+<h1>🎤 Emotion Recognition AI 🤖</h1>
 
-<form action="/predict" method="post">
+<form method="POST"
+enctype="multipart/form-data">
 
-<select name="gender">
-<option value="1">Male</option>
-<option value="0">Female</option>
-</select>
+<input type="file"
+name="audio"
+required>
 
-<select name="married">
-<option value="1">Married</option>
-<option value="0">Not Married</option>
-</select>
-
-<select name="dependents">
-<option value="0">0</option>
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3+</option>
-</select>
-
-<select name="education">
-<option value="0">Graduate</option>
-<option value="1">Not Graduate</option>
-</select>
-
-<select name="self_employed">
-<option value="1">Yes</option>
-<option value="0">No</option>
-</select>
-
-<input type="number" name="applicant_income" placeholder="Applicant Income" required>
-
-<input type="number" name="coapplicant_income" placeholder="Coapplicant Income" required>
-
-<input type="number" name="loan_amount" placeholder="Loan Amount" required>
-
-<input type="number" name="loan_term" placeholder="Loan Term" required>
-
-<select name="credit_history">
-<option value="1">Good Credit History</option>
-<option value="0">Bad Credit History</option>
-</select>
-
-<select name="property_area">
-<option value="2">Urban</option>
-<option value="1">Semi Urban</option>
-<option value="0">Rural</option>
-</select>
+<br><br>
 
 <button type="submit">
-Predict Loan Status
+Predict Emotion
 </button>
 
 </form>
 
-<h2>{{ prediction_text }}</h2>
+{% if prediction %}
+
+<div class="result">
+
+{{ prediction }}
+
+</div>
+
+{% endif %}
 
 </div>
 
 </body>
+
 </html>
