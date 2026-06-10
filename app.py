@@ -1,23 +1,28 @@
 from flask import Flask, render_template, request
-import librosa
 import numpy as np
+import librosa
 import pickle
+import tempfile
+import os
 
 from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
 
+# Load model
 model = load_model("emotion_model.h5")
 
-with open("label_encoder.pkl","rb") as f:
+# Load encoder
+with open("label_encoder.pkl", "rb") as f:
     encoder = pickle.load(f)
 
-with open("scaler.pkl","rb") as f:
+# Load scaler
+with open("scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
-def extract_features(file_path):
 
-    audio,sr = librosa.load(
+def extract_features(file_path):
+    audio, sr = librosa.load(
         file_path,
         duration=3,
         offset=0.5
@@ -29,67 +34,73 @@ def extract_features(file_path):
         n_mfcc=40
     )
 
-    mfcc = np.mean(
-        mfcc.T,
-        axis=0
-    )
+    mfcc = np.mean(mfcc.T, axis=0)
 
     return mfcc
 
-@app.route("/",methods=["GET","POST"])
 
+@app.route("/", methods=["GET", "POST"])
 def home():
 
-    prediction=""
+    prediction = ""
 
-    if request.method=="POST":
+    try:
 
-        file=request.files["audio"]
+        if request.method == "POST":
 
-        filepath="temp.wav"
+            if "audio" not in request.files:
+                return "No audio file uploaded"
 
-        file.save(filepath)
+            file = request.files["audio"]
 
-        features=extract_features(filepath)
+            if file.filename == "":
+                return "No file selected"
 
-        features=scaler.transform(
-            [features]
+            # Save uploaded file temporarily
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp:
+                file.save(temp.name)
+                temp_path = temp.name
+
+            # Extract features
+            features = extract_features(temp_path)
+
+            # Remove temp file
+            os.remove(temp_path)
+
+            # Scale features
+            features = scaler.transform([features])
+
+            # Predict
+            pred = model.predict(features, verbose=0)
+
+            emotion = encoder.inverse_transform(
+                [np.argmax(pred)]
+            )[0]
+
+            emoji_map = {
+                "happy": "😊 Happy",
+                "sad": "😢 Sad",
+                "angry": "😡 Angry",
+                "fearful": "😨 Fearful",
+                "neutral": "😐 Neutral",
+                "calm": "😌 Calm",
+                "disgust": "🤢 Disgust",
+                "surprised": "😲 Surprised"
+            }
+
+            prediction = emoji_map.get(
+                emotion,
+                emotion
+            )
+
+        return render_template(
+            "index.html",
+            prediction=prediction
         )
 
-        pred=model.predict(features)
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-        emotion=encoder.inverse_transform(
-            [np.argmax(pred)]
-        )[0]
 
-        emoji_map={
-
-            "happy":"😊 Happy",
-
-            "sad":"😢 Sad",
-
-            "angry":"😡 Angry",
-
-            "fearful":"😨 Fearful",
-
-            "neutral":"😐 Neutral",
-
-            "calm":"😌 Calm",
-
-            "disgust":"🤢 Disgust",
-
-            "surprised":"😲 Surprised"
-        }
-
-        prediction=emoji_map.get(
-            emotion,
-            emotion
-        )
-
-    return render_template(
-        "index.html",
-        prediction=prediction
-    )
-
-if __name__=="__main__":
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
