@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bank Loan Approval Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🏦 Bank Loan Approval Prediction</h1>
+
+<form action="/predict" method="post">
+
+<select name="gender">
+<option value="1">Male</option>
+<option value="0">Female</option>
+</select>
+
+<select name="married">
+<option value="1">Married</option>
+<option value="0">Not Married</option>
+</select>
+
+<select name="dependents">
+<option value="0">0</option>
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3+</option>
+</select>
+
+<select name="education">
+<option value="0">Graduate</option>
+<option value="1">Not Graduate</option>
+</select>
+
+<select name="self_employed">
+<option value="1">Yes</option>
+<option value="0">No</option>
+</select>
+
+<input type="number" name="applicant_income" placeholder="Applicant Income" required>
+
+<input type="number" name="coapplicant_income" placeholder="Coapplicant Income" required>
+
+<input type="number" name="loan_amount" placeholder="Loan Amount" required>
+
+<input type="number" name="loan_term" placeholder="Loan Term" required>
+
+<select name="credit_history">
+<option value="1">Good Credit History</option>
+<option value="0">Bad Credit History</option>
+</select>
+
+<select name="property_area">
+<option value="2">Urban</option>
+<option value="1">Semi Urban</option>
+<option value="0">Rural</option>
+</select>
+
+<button type="submit">
+Predict Loan Status
+</button>
+
+</form>
+
+<h2>{{ prediction_text }}</h2>
+
+</div>
+
+</body>
+</html>
